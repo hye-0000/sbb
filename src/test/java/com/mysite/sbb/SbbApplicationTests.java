@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +56,8 @@ class SbbApplicationTests {
         q2.setCreateDate(LocalDateTime.now());
         questionRepository.save(q2);  // 두번째 질문 저장
 
+
+
         // 답변 1개 생성
         Answer a1 = new Answer();
         a1.setContent("네 자동으로 생성됩니다.");
@@ -66,19 +69,21 @@ class SbbApplicationTests {
     @Test
     @DisplayName("데이터 저장하기")
     void t001() {
+        for (int i = 1; i <= 300; i++) {
+            String subject = String.format("테스트 데이터입니다:[%03d]", i);
+            String content = "내용무";
+            this.questionService.create(subject, content);
+        }
+
         // 질문 1개 생성
-        Question q = new Question();
-        q.setSubject("세계에서 가장 부유한 국가가 어디인가요?");
-        q.setContent("알고 싶습니다.");
-        q.setCreateDate(LocalDateTime.now());
-        questionRepository.save(q);
+//        Question q = new Question();
+//        q.setSubject("세계에서 가장 부유한 국가가 어디인가요?");
+//        q.setContent("알고 싶습니다.");
+//        q.setCreateDate(LocalDateTime.now());
+//        questionRepository.save(q);
 
 //        assertEquals("세계에서 가장 부유한 국가가 어디인가요?", questionRepository.findById(3).get().getSubject());
-//        for (int i = 1; i <= 300; i++) {
-//            String subject = String.format("테스트 데이터입니다:[%03d]", i);
-//            String content = "내용무";
-//            this.questionService.create(subject, content);
-//        }
+
 //        Question q1 = new Question();
 //        q1.setSubject("sbb가 무엇인가요?");
 //        q1.setContent("sbb에 대해서 알고 싶습니다.");
@@ -98,7 +103,7 @@ class SbbApplicationTests {
     @DisplayName("데이터 조회하기_findAll")
     void t002(){
         List<Question> all = this.questionRepository.findAll();
-        assertEquals(2, all.size());
+        assertEquals(302, all.size());
 
         Question q = all.get(0);
         assertEquals("sbb가 무엇인가요?", q.getSubject());
@@ -159,12 +164,12 @@ class SbbApplicationTests {
     void t008() {
         // questionRepository.count()
         // SQL : SELECT COUNT(*) FROM question;
-        assertEquals(2, questionRepository.count());
+        assertEquals(302, questionRepository.count());
         Optional<Question> oq = questionRepository.findById(1);
         assertTrue(oq.isPresent());
         Question q = oq.get();
         questionRepository.delete(q);
-        assertEquals(1, questionRepository.count());
+        assertEquals(301, questionRepository.count());
     }
 
     @Test
@@ -202,6 +207,7 @@ class SbbApplicationTests {
     }
 
     @Transactional
+    @Rollback(false)
     @Test
     @DisplayName("질문에 달린 답변 찾기")
     void t011() {
