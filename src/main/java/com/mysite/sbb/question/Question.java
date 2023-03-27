@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,8 +25,11 @@ public class Question {
     @Column(columnDefinition = "TEXT")
     private String content;
     private LocalDateTime createDate;
+    private LocalDateTime modifyDate;
     @ManyToOne
     private SiteUser author;
+    @ManyToMany
+    Set<SiteUser> voter;    //추천인은 중복이 되면 안됨 -> 중복을 허용하지 않는 set 사용
 
 
     // OneToMany 자바세상에서의 편의를 위해서 필드 생성
